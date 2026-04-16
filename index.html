@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinelle — Veille réglementaire automatisée pour PMEs</title>
+  <meta name="description" content="Sentinelle surveille NIS2, RGPD, AI Act, CSRD et 200+ réglementations pour vous. Recevez uniquement les alertes qui impactent votre entreprise." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0c0c0c;
+      --white:   #f8f7f4;
+      --ink:     #1a1a1a;
+      --muted:   #6b6b6b;
+      --accent:  #d4420a;
+      --accent2: #1a3a5c;
+      --border:  #e2e0db;
+      --card:    #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Sora', sans-serif;
+      line-height: 1.2;
+    }
+
+    /* ─── NAV ─────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248, 247, 244, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .logo {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--ink);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .nav-cta {
+      background: var(--ink);
+      color: var(--white);
+      font-family: 'Sora', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent); }
+
+    /* ─── HERO ────────────────────────────────────────────── */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 90px 5% 70px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff3ef;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 12px;
+      border-radius: 100px;
+      border: 1px solid #f5c4b3;
+      margin-bottom: 20px;
+    }
+    .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    .hero h1 {
+      font-size: clamp(2rem, 3.5vw, 2.9rem);
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-group input[type="email"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input[type="email"]:focus { border-color: var(--accent); }
+    .form-group input[type="email"]::placeholder { color: #aaa; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 13px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { background: #b83508; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .social-proof {
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .avatars { display: flex; }
+    .avatars span {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent2);
+      border: 2px solid var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #fff;
+      margin-left: -8px;
+    }
+    .avatars span:first-child { margin-left: 0; }
+
+    /* ─── HERO CARD ──────────────────────────────────────── */
+    .hero-visual {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.07);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .card-title { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-live { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #22c55e; font-weight: 500; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .alert-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .alert-item:last-child { margin-bottom: 0; }
+    .alert-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .alert-icon.red { background: #fff3ef; }
+    .alert-icon.blue { background: #eff6ff; }
+    .alert-icon.green { background: #f0fdf4; }
+    .alert-icon.orange { background: #fffbeb; }
+    .alert-text { flex: 1; }
+    .alert-name { font-size: 0.82rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .alert-desc { font-size: 0.75rem; color: var(--muted); }
+    .alert-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .badge-urgent { background: #fee2e2; color: #dc2626; }
+    .badge-watch { background: #fef9c3; color: #a16207; }
+    .badge-ok { background: #dcfce7; color: #16a34a; }
+
+    /* ─── LOGOS ───────────────────────────────────────────── */
+    .logos-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 5%;
+    }
+    .logos-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .logos-label { font-size: 0.78rem; color: var(--muted); font-weight: 500; white-space: nowrap; }
+    .logo-list { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; }
+    .logo-chip {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #bbb;
+      letter-spacing: -0.01em;
+    }
+
+    /* ─── FEATURES ────────────────────────────────────────── */
+    .features {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 90px 5%;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 2.8vw, 2.3rem);
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .section-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: box-shadow 0.2s;
+    }
+    .feature-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #fff3ef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 18px;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 10px; }
+    .feature-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    /* ─── REGULATIONS ─────────────────────────────────────── */
+    .regulations {
+      background: var(--ink);
+      padding: 90px 5%;
+    }
+    .regulations-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .regulations .section-label { color: #f87a5a; }
+    .regulations .section-title { color: var(--white); }
+    .regulations .section-sub { color: #999; }
+
+    .reg-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .reg-card {
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      background: #141414;
+    }
+    .reg-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); margin-bottom: 6px; }
+    .reg-desc { font-size: 0.78rem; color: #888; line-height: 1.5; margin-bottom: 14px; }
+    .reg-deadline {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 100px;
+      display: inline-block;
+    }
+    .deadline-red { background: rgba(220,38,38,0.15); color: #f87171; }
+    .deadline-orange { background: rgba(234,88,12,0.15); color: #fb923c; }
+    .deadline-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+    /* ─── PRICING ─────────────────────────────────────────── */
+    .pricing {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 90px 5%;
+      text-align: center;
+    }
+    .pricing .section-sub { margin: 0 auto 60px; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      text-align: left;
+    }
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .price-card.featured {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+    .price-tier { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .price-card.featured .price-tier { color: #888; }
+    .price-amount { font-family: 'Sora', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .price-card.featured .price-amount { color: var(--white); }
+    .price-period { font-size: 0.82rem; color: var(--muted); margin-bottom: 24px; }
+    .price-card.featured .price-period { color: #888; }
+    .price-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .price-card.featured .price-desc { color: #aaa; }
+    .price-features { list-style: none; margin-bottom: 28px; }
+    .price-features li {
+      font-size: 0.85rem;
+      color: var(--muted);
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-card.featured .price-features li { color: #ccc; border-color: #2a2a2a; }
+    .price-features li:last-child { border-bottom: none; }
+    .check { color: #22c55e; font-weight: 700; }
+    .btn-outline {
+      display: block;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      color: var(--ink);
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
+    .btn-featured {
+      display: block;
+      text-align: center;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-featured:hover { background: #b83508; }
+
+
+    /* ─── CTA ─────────────────────────────────────────────── */
+    .cta-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 90px 5%;
+      text-align: center;
+    }
+    .cta-section h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 16px; letter-spacing: -0.02em; }
+    .cta-section p { font-size: 1rem; color: var(--muted); margin-bottom: 36px; }
+    .cta-form {
+      display: flex;
+      gap: 10px;
+      max-width: 440px;
+      margin: 0 auto 14px;
+    }
+    .cta-form input[type="email"] {
+      flex: 1;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--accent); }
+    .cta-note { font-size: 0.78rem; color: var(--muted); }
+
+    /* ─── FOOTER ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 5%;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    footer .logo { font-size: 1rem; }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+
+    /* ─── SUCCESS MSG (inline) ───────────────────────────── */
+    .success-msg {
+      display: none;
+      font-size: 0.88rem;
+      color: #16a34a;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+
+    /* ─── CONFIRMATION OVERLAY ────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(12,12,12,0.6);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .overlay.active { display: flex; }
+
+    .confirm-modal {
+      background: var(--white);
+      border-radius: 20px;
+      max-width: 640px;
+      width: 100%;
+      padding: 44px;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+      animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .confirm-close {
+      position: absolute;
+      top: 18px; right: 18px;
+      background: var(--border);
+      border: none;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      transition: background 0.2s;
+    }
+    .confirm-close:hover { background: #d5d3ce; }
+
+    .confirm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0fdf4;
+      color: #16a34a;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid #bbf7d0;
+      margin-bottom: 20px;
+    }
+
+    .confirm-modal h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .confirm-modal > p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .confirm-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+    .confirm-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .confirm-step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--white);
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-num.orange { background: var(--accent); }
+    .step-num.blue   { background: var(--accent2); }
+
+    .step-body h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .step-body p {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .confirm-footer {
+      background: #f7f6f3;
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .confirm-footer-icon { font-size: 1.4rem; }
+    .confirm-footer p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .confirm-footer strong { color: var(--ink); font-weight: 600; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 40px; }
+      .hero-visual { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .reg-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+    }
+    @media (max-width: 600px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .reg-grid { grid-template-columns: 1fr; }
+      .cta-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-dot"></span> Sentinelle
+      </a>
+      <a href="#waitlist" class="nav-cta">Rejoindre la liste d'attente →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="tag"><span class="tag-dot"></span> Bêta privée — Accès limité</div>
+      <h1>La conformité réglementaire <em>pilotée par IA</em> pour votre PME</h1>
+      <p>NIS2, RGPD, AI Act, CSRD… Sentinelle surveille 200+ réglementations et vous alerte uniquement sur ce qui impacte votre entreprise. Fini les heures perdues à chasser l'information.</p>
+
+      <form class="form-group" id="hero-form" onsubmit="handleSubmit(event, 'hero')">
+        <input type="email" placeholder="votre@email.com" required />
+        <button type="submit" class="btn-primary">Rejoindre la bêta →</button>
+      </form>
+      <div class="success-msg" id="hero-success">✅ Vous êtes sur la liste ! On vous contacte en priorité.</div>
+
+      <div class="social-proof">
+        <div class="avatars">
+          <span>MR</span><span>AL</span><span>SB</span><span>JF</span>
+        </div>
+        <span>+47 dirigeants et DAFs déjà inscrits</span>
+      </div>
+    </div>
+
+    <!-- Hero Visual Card -->
+    <div class="hero-visual">
+      <div class="card-header">
+        <span class="card-title">Tableau de bord Sentinelle</span>
+        <span class="card-live"><span class="live-dot"></span> En temps réel</span>
+      </div>
+
+      <div class="alert-item">
+        <div class="alert-icon red">🔴</div>
+        <div class="alert-text">
+          <div class="alert-name">NIS2 — Obligation de déclaration</div>
+          <div class="alert-desc">Vous devez désigner un RSSI et déclarer vos incidents sous 24h</div>
+        </div>
+        <span class="alert-badge badge-urgent">Urgent · J-18</span>
+      </div>
+
+      <div class="alert-item">
+        <div class="alert-icon blue">📋</div>
+        <div class="alert-text">
+          <div class="alert-name">CSRD — Rapport ESG obligatoire</div>
+          <div class="alert-desc">Votre bilan carbone doit être prêt pour votre prochain exercice fiscal</div>
+        </div>
+        <span class="alert-badge badge-watch">À surveiller · J-89</span>
+      </div>
+
+      <div class="alert-item">
+        <div class="alert-icon green">✅</div>
+        <div class="alert-text">
+          <div class="alert-name">RGPD — Registre de traitement</div>
+          <div class="alert-desc">Votre registre est à jour. Prochaine vérification dans 6 mois.</div>
+        </div>
+        <span class="alert-badge badge-ok">Conforme</span>
+      </div>
+
+      <div class="alert-item">
+        <div class="alert-icon orange">⚖️</div>
+        <div class="alert-text">
+          <div class="alert-name">AI Act — Usage des outils IA</div>
+          <div class="alert-desc">3 outils IA utilisés dans votre équipe nécessitent une déclaration</div>
+        </div>
+        <span class="alert-badge badge-watch">Action requise · J-120</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGOS -->
+  <div class="logos-section">
+    <div class="logos-inner">
+      <span class="logos-label">Conçu pour les PMEs soumises à :</span>
+      <div class="logo-list">
+        <span class="logo-chip">NIS2</span>
+        <span class="logo-chip">RGPD</span>
+        <span class="logo-chip">AI Act</span>
+        <span class="logo-chip">CSRD</span>
+        <span class="logo-chip">DORA</span>
+        <span class="logo-chip">Loi Sapin II</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <p class="section-label">Fonctionnalités</p>
+    <h2 class="section-title">Votre radar réglementaire<br>toujours actif</h2>
+    <p class="section-sub">Sentinelle surveille les sources officielles 24h/24 et filtre l'information selon le profil exact de votre entreprise.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Alertes personnalisées</h3>
+        <p>Renseignez votre secteur, taille et pays d'activité. Sentinelle ne vous envoie que les alertes qui vous concernent réellement — zéro bruit.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Calendrier de conformité</h3>
+        <p>Toutes vos échéances réglementaires sur une timeline unique. Recevez des rappels automatiques 90, 30 et 7 jours avant chaque deadline.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Fiches d'action en clair</h3>
+        <p>Chaque alerte est accompagnée d'une fiche opérationnelle en français, sans jargon juridique : ce que vous devez faire, comment, dans quel délai.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Collaboration d'équipe</h3>
+        <p>Assignez des actions à vos collaborateurs (DAF, RH, DSI), suivez l'avancement et centralisez les preuves de conformité en un seul endroit.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Score de conformité</h3>
+        <p>Un tableau de bord visuel avec votre score de conformité global et par domaine. Montrez à vos clients et auditeurs que vous êtes en règle.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📤</div>
+        <h3>Rapports automatiques</h3>
+        <p>Générez un rapport de conformité PDF en un clic, prêt à présenter en CODIR, à votre commissaire aux comptes ou lors d'un audit client.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGULATIONS -->
+  <section class="regulations" id="reglements">
+    <div class="regulations-inner">
+      <p class="section-label">Couverture réglementaire</p>
+      <h2 class="section-title">Les 4 réglementations<br>qui font peur aux PMEs en 2025</h2>
+      <p class="section-sub">Sentinelle vous guide pas à pas sur chacune d'entre elles.</p>
+
+      <div class="reg-grid">
+        <div class="reg-card">
+          <div class="reg-name">NIS2</div>
+          <div class="reg-desc">Directive cybersécurité européenne. Oblige les PMEs à déclarer leurs incidents et à nommer un RSSI.</div>
+          <span class="reg-deadline deadline-red">⚠️ En vigueur maintenant</span>
+        </div>
+        <div class="reg-card">
+          <div class="reg-name">CSRD / ESG</div>
+          <div class="reg-desc">Obligation de rapport sur la durabilité (carbone, social, gouvernance) pour les entreprises > 250 salariés dès 2025.</div>
+          <span class="reg-deadline deadline-orange">📅 Premiers rapports en 2026</span>
+        </div>
+        <div class="reg-card">
+          <div class="reg-name">AI Act</div>
+          <div class="reg-desc">Réglementation européenne sur l'IA. Tout usage d'outils IA dans votre entreprise doit être déclaré et évalué.</div>
+          <span class="reg-deadline deadline-orange">📅 Application partielle en 2025</span>
+        </div>
+        <div class="reg-card">
+          <div class="reg-name">RGPD</div>
+          <div class="reg-desc">Le classique. Amendes jusqu'à 4% du CA mondial. La CNIL intensifie ses contrôles sur les PMEs depuis 2024.</div>
+          <span class="reg-deadline deadline-red">⚠️ Contrôles CNIL en hausse</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="tarifs">
+    <p class="section-label">Tarifs</p>
+    <h2 class="section-title">Simple. Transparent. ROI immédiat.</h2>
+    <p class="section-sub">Un avocat spécialisé coûte 350€/heure. Sentinelle vous en économise 15 à 20 par mois.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Starter</div>
+        <div class="price-amount">290€</div>
+        <div class="price-period">/mois · sans engagement</div>
+        <div class="price-desc">Pour les PMEs qui veulent commencer à structurer leur conformité sans se ruiner.</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> 2 domaines réglementaires</li>
+          <li><span class="check">✓</span> Alertes email hebdomadaires</li>
+          <li><span class="check">✓</span> Calendrier des échéances</li>
+          <li><span class="check">✓</span> 3 utilisateurs</li>
+        </ul>
+        <a href="#waitlist" class="btn-outline">Démarrer →</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-tier">Professionnel · ⭐ Populaire</div>
+        <div class="price-amount" style="color:#f8f7f4">690€</div>
+        <div class="price-period">/mois · sans engagement</div>
+        <div class="price-desc" style="color:#aaa">Pour les PMEs sérieuses qui veulent une vision complète et des preuves de conformité.</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Tous les domaines réglementaires</li>
+          <li><span class="check">✓</span> Alertes temps réel</li>
+          <li><span class="check">✓</span> Fiches d'action détaillées</li>
+          <li><span class="check">✓</span> Rapports PDF automatiques</li>
+          <li><span class="check">✓</span> 10 utilisateurs</li>
+        </ul>
+        <a href="#waitlist" class="btn-featured">Rejoindre la bêta →</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-amount">Sur devis</div>
+        <div class="price-period">/mois · contrat annuel</div>
+        <div class="price-desc">Pour les groupes et ETIs avec des besoins multi-entités et une conformité sur-mesure.</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Multi-entités / filiales</li>
+          <li><span class="check">✓</span> API & intégrations sur mesure</li>
+          <li><span class="check">✓</span> Account manager dédié</li>
+          <li><span class="check">✓</span> Utilisateurs illimités</li>
+        </ul>
+        <a href="mailto:contact@sentinelle.io" class="btn-outline">Nous contacter →</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CTA FINAL -->
+  <section class="cta-section" id="waitlist">
+    <h2>Prêt à dormir sur vos deux oreilles ?</h2>
+    <p>Rejoignez 47+ dirigeants sur la liste d'attente. Accès bêta offert aux 100 premiers inscrits.</p>
+    <form class="cta-form" id="cta-form" onsubmit="handleSubmit(event, 'cta')">
+      <input type="email" placeholder="votre@email.com" required />
+      <button type="submit" class="btn-primary">Rejoindre →</button>
+    </form>
+    <div class="success-msg" id="cta-success">✅ Vous êtes sur la liste ! On vous contacte en priorité.</div>
+    <p class="cta-note">Aucune carte bancaire. Aucun engagement. Accès bêta gratuit pendant 30 jours.</p>
+  </section>
+
+  <!-- CONFIRMATION OVERLAY -->
+  <div class="overlay" id="confirm-overlay" onclick="closeOverlay(event)">
+    <div class="confirm-modal">
+      <button class="confirm-close" onclick="document.getElementById('confirm-overlay').classList.remove('active')">✕</button>
+
+      <div class="confirm-badge">✅ Vous êtes sur la liste d'attente !</div>
+
+      <h2>Voici comment Sentinelle va changer votre quotidien</h2>
+      <p>Pendant que vous continuez à gérer votre entreprise, Sentinelle surveille tout pour vous. Voici exactement comment ça fonctionne :</p>
+
+      <div class="confirm-steps">
+        <div class="confirm-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Vous renseignez votre profil en 3 minutes</h4>
+            <p>Secteur d'activité, taille de l'entreprise, pays d'opération. Sentinelle apprend qui vous êtes pour ne vous envoyer que ce qui vous concerne — zéro bruit, zéro distraction.</p>
+          </div>
+        </div>
+        <div class="confirm-step">
+          <div class="step-num orange">2</div>
+          <div class="step-body">
+            <h4>Sentinelle surveille 200+ sources officielles 24h/24</h4>
+            <p>Journal Officiel, EUR-Lex, CNIL, ANSSI, ANSSI… Notre moteur IA lit tout en temps réel et filtre uniquement ce qui change pour votre profil. Vous n'avez rien à faire.</p>
+          </div>
+        </div>
+        <div class="confirm-step">
+          <div class="step-num blue">3</div>
+          <div class="step-body">
+            <h4>Vous recevez une alerte claire avec un plan d'action</h4>
+            <p>Pas de jargon juridique. Chaque alerte est accompagnée d'une fiche en français : ce que vous devez faire, comment le faire, et dans quel délai. Comme un conseiller juridique dans votre boîte mail.</p>
+          </div>
+        </div>
+        <div class="confirm-step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Votre tableau de bord garde la trace de tout</h4>
+            <p>Toutes vos obligations, leur statut (à faire / en cours / conforme), vos échéances sur un calendrier, et un score de conformité global. En cas d'audit, vous générez un rapport PDF en un clic.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirm-footer">
+        <div class="confirm-footer-icon">📬</div>
+        <p>On vous contactera à <strong id="confirm-email">votre adresse email</strong> dès que l'accès bêta est ouvert. <strong>Les 100 premiers inscrits bénéficient de 30 jours gratuits.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <a href="#" class="logo"><span class="logo-dot"></span> Sentinelle</a>
+      <span class="footer-copy">© 2025 Sentinelle. Fait en France 🇫🇷 — contact@sentinelle.io</span>
+    </div>
+  </footer>
+
+  <script>
+    // ─── WEB3FORMS — envoie chaque inscription à oskarseguin@gmail.com ───────
+    // Aucun compte nécessaire. Ton email est directement dans le code.
+    const OWNER_EMAIL = 'oskarseguin@gmail.com';
+    const WEB3FORMS_KEY = 'fa14e28e-b898-4e66-9722-0ab62bc1b418';
+
+    async function handleSubmit(event, formId) {
+      event.preventDefault();
+      const form = event.target;
+      const email = form.querySelector('input[type="email"]').value;
+
+      // Affiche l'email dans la modal de confirmation
+      document.getElementById('confirm-email').textContent = email;
+
+      // Envoie via Web3Forms (gratuit, sans compte)
+      try {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            email: email,
+            subject: '🚀 Nouvelle inscription Sentinelle — Liste d\'attente',
+            message: `Nouvel inscrit sur la liste d'attente Sentinelle !\n\nEmail : ${email}\nSource : formulaire ${formId}\nDate : ${new Date().toLocaleString('fr-FR')}`,
+            from_name: 'Sentinelle Landing Page',
+            replyto: email
+          })
+        });
+      } catch(e) { console.warn('Envoi email :', e); }
+
+      // Cache le formulaire + ouvre la modal de confirmation
+      form.style.display = 'none';
+      document.getElementById('confirm-overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeOverlay(e) {
+      if (e.target === document.getElementById('confirm-overlay')) {
+        document.getElementById('confirm-overlay').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Fermer avec Échap
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.getElementById('confirm-overlay').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
