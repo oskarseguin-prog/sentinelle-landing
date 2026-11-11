@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0b10" />
+  <title>Partage — Dépenses entre amis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0b10;
+      --surface: #14141c;
+      --surface-2: #1c1c27;
+      --border: #262634;
+      --text: #ececf1;
+      --muted: #8a8a9e;
+      --accent: #8b7cff;
+      --accent-2: #5ee6c4;
+      --danger: #ff6b81;
+      --radius: 16px;
+    }
+
+    html, body { background: var(--bg); }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(139,124,255,.14), transparent 60%),
+        radial-gradient(700px 400px at 100% 0%, rgba(94,230,196,.08), transparent 60%),
+        var(--bg);
+      background-attachment: fixed;
+    }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 40px 16px 80px; }
+
+    header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; letter-spacing: -0.03em; }
+    h1 span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
+
+    h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 36px 0 14px; }
+
+    input {
+      font: inherit; color: var(--text);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+      min-width: 0;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input::placeholder { color: #5d5d70; }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,124,255,.18); }
+    input[type=number] { -moz-appearance: textfield; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    button {
+      font: inherit; cursor: pointer; border: 0;
+      border-radius: 10px; padding: 10px 16px;
+      font-weight: 600; color: #0b0b10;
+      background: linear-gradient(135deg, var(--accent), #a99dff);
+      transition: transform .1s, filter .15s, opacity .15s;
+      white-space: nowrap;
+    }
+    button:hover { filter: brightness(1.1); }
+    button:active { transform: scale(.97); }
+    button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 500; }
+    button.ghost:hover { color: var(--text); border-color: #3a3a4c; }
+    button.icon { background: transparent; color: var(--muted); padding: 6px 8px; font-size: 16px; line-height: 1; border-radius: 8px; }
+    button.icon:hover { color: var(--danger); background: rgba(255,107,129,.08); }
+
+    .add-person { display: flex; gap: 10px; }
+    .add-person input { flex: 1; font-size: 16px; padding: 14px 16px; }
+    .add-person button { padding: 14px 20px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .card-head { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      display: grid; place-items: center; font-weight: 700; font-size: 16px; color: #0b0b10;
+    }
+    .card-head .name { font-weight: 600; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-head .total { color: var(--muted); font-size: 13px; }
+    .card-head .grow { flex: 1; min-width: 0; }
+
+    .expenses { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .expenses li {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface-2); border-radius: 10px;
+      padding: 8px 6px 8px 12px; font-size: 14px;
+    }
+    .expenses .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .expenses .amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .empty { color: #5d5d70; font-size: 13px; padding: 4px 2px; }
+
+    .add-expense { display: flex; gap: 6px; }
+    .add-expense input { padding: 9px 10px; font-size: 14px; }
+    .add-expense .l { flex: 1.6; }
+    .add-expense .a { flex: 1; width: 80px; }
+    .add-expense button { padding: 9px 12px; }
+
+    .results { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 760px) { .results { grid-template-columns: 1fr; } }
+
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .stat { background: var(--surface-2); border-radius: 12px; padding: 14px; }
+    .stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .stat .v { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+    .bal { display: flex; flex-direction: column; gap: 10px; }
+    .bal-row { display: grid; grid-template-columns: 90px 1fr 90px; align-items: center; gap: 10px; font-size: 14px; }
+    .bal-row .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bal-row .v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .bar { position: relative; height: 8px; background: var(--surface-2); border-radius: 99px; }
+    .bar::after { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border); }
+    .bar i { position: absolute; top: 0; bottom: 0; border-radius: 99px; }
+    .pos { color: var(--accent-2); }
+    .neg { color: var(--danger); }
+
+    .transfers { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .transfer {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface-2); border-radius: 12px; padding: 14px;
+    }
+    .transfer .who { flex: 1; min-width: 0; font-size: 15px; }
+    .transfer .who b { font-weight: 600; }
+    .transfer .arrow { color: var(--muted); margin: 0 6px; }
+    .transfer .money {
+      font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums;
+      background: rgba(94,230,196,.1); color: var(--accent-2);
+      padding: 6px 10px; border-radius: 8px;
+    }
+    .transfer .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+
+    .done { text-align: center; padding: 28px 10px; color: var(--muted); }
+    .done .big { font-size: 34px; margin-bottom: 6px; }
+
+    .hero-empty {
+      text-align: center; color: var(--muted); padding: 50px 20px;
+      border: 1px dashed var(--border); border-radius: var(--radius);
+    }
+
+    footer { margin-top: 40px; text-align: center; color: #5d5d70; font-size: 13px; }
+
+    @media (max-width: 520px) {
+      .wrap { padding-top: 28px; }
+      .add-person input, .add-person button { padding: 12px 14px; }
+      .bal-row { grid-template-columns: 70px 1fr 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Partage<span>.</span></h1>
+        <p class="sub">Ajoute tes amis, leurs dépenses — on calcule qui doit quoi à qui.</p>
+      </div>
+      <button class="ghost" id="reset" type="button">Tout effacer</button>
+    </header>
+
+    <form class="add-person" id="addPerson" autocomplete="off">
+      <input id="personName" placeholder="Nom d'un ami (ex. Léa)" maxlength="30" aria-label="Nom" />
+      <button type="submit">+ Ajouter</button>
+    </form>
+
+    <h2>Participants &amp; dépenses</h2>
+    <div id="people"></div>
+
+    <div id="resultsSection">
+      <h2>Résultat</h2>
+      <div class="results">
+        <div class="panel">
+          <div class="stats">
+            <div class="stat"><div class="k">Total</div><div class="v" id="total">0 €</div></div>
+            <div class="stat"><div class="k">Par personne</div><div class="v" id="share">0 €</div></div>
+          </div>
+          <div class="bal" id="balances"></div>
+        </div>
+        <div class="panel">
+          <ul class="transfers" id="transfers"></ul>
+        </div>
+      </div>
+    </div>
+
+    <footer>Les données restent dans ton navigateur.</footer>
+  </div>
+
+  <script>
+    const COLORS = ['#8b7cff', '#5ee6c4', '#ffb86b', '#ff7eb6', '#6bc7ff', '#c3f05e', '#ff8f6b', '#d59bff'];
+    const KEY = 'partage-v1';
+    const fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+    const euro = cents => fmt.format(cents / 100);
+
+    let state = load();
+
+    function load() {
+      try {
+        const s = JSON.parse(localStorage.getItem(KEY));
+        if (s && Array.isArray(s.people)) return s;
+      } catch (e) {}
+      return { people: [], nextId: 1 };
+    }
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    const esc = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const color = p => COLORS[(p.id - 1) % COLORS.length];
+    const sumOf = p => p.expenses.reduce((a, e) => a + e.cents, 0);
+
+    function parseAmount(str) {
+      const n = parseFloat(String(str).replace(',', '.').replace(/[^\d.]/g, ''));
+      return isFinite(n) && n > 0 ? Math.round(n * 100) : null;
+    }
+
+    // ── Calcul ──────────────────────────────────────────────
+    function compute() {
+      const people = state.people;
+      const n = people.length;
+      const totals = people.map(sumOf);
+      const total = totals.reduce((a, b) => a + b, 0);
+      if (!n) return { total: 0, share: 0, balances: [], transfers: [] };
+
+      // Répartition exacte au centime : les centimes restants vont aux premiers
+      const base = Math.floor(total / n), rest = total - base * n;
+      const balances = people.map((p, i) => ({
+        p, paid: totals[i], bal: totals[i] - (base + (i < rest ? 1 : 0))
+      }));
+
+      // Minimise le nombre de virements (glouton : plus gros débiteur → plus gros créancier)
+      const debt = balances.filter(b => b.bal < 0).map(b => ({ p: b.p, v: -b.bal }));
+      const cred = balances.filter(b => b.bal > 0).map(b => ({ p: b.p, v: b.bal }));
+      const transfers = [];
+      while (debt.length && cred.length) {
+        debt.sort((a, b) => b.v - a.v); cred.sort((a, b) => b.v - a.v);
+        const d = debt[0], c = cred[0], amt = Math.min(d.v, c.v);
+        transfers.push({ from: d.p, to: c.p, cents: amt });
+        d.v -= amt; c.v -= amt;
+        if (!d.v) debt.shift();
+        if (!c.v) cred.shift();
+      }
+      return { total, share: total / n, balances, transfers };
+    }
+
+    // ── Rendu ───────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+
+    function render() {
+      const box = $('people');
+      if (!state.people.length) {
+        box.innerHTML = '<div class="hero-empty">Commence par ajouter les noms de tes amis ci-dessus 👆</div>';
+      } else {
+        box.innerHTML = '<div class="grid">' + state.people.map(p => `
+          <div class="card" data-id="${p.id}">
+            <div class="card-head">
+              <div class="avatar" style="background:${color(p)}">${esc(p.name.charAt(0).toUpperCase())}</div>
+              <div class="grow">
+                <div class="name">${esc(p.name)}</div>
+                <div class="total">${p.expenses.length} dépense${p.expenses.length > 1 ? 's' : ''} · ${euro(sumOf(p))}</div>
+              </div>
+              <button class="icon" data-act="del-person" title="Retirer ${esc(p.name)}" aria-label="Retirer">✕</button>
+            </div>
+            <ul class="expenses">
+              ${p.expenses.length ? p.expenses.map(e => `
+                <li>
+                  <span class="label">${esc(e.label || 'Dépense')}</span>
+                  <span class="amt">${euro(e.cents)}</span>
+                  <button class="icon" data-act="del-exp" data-eid="${e.id}" aria-label="Supprimer">✕</button>
+                </li>`).join('') : '<li class="empty" style="background:none">Aucune dépense</li>'}
+            </ul>
+            <form class="add-expense" data-act="add-exp" autocomplete="off">
+              <input class="l" name="label" placeholder="Quoi ? (resto…)" maxlength="40" />
+              <input class="a" name="amount" placeholder="€" inputmode="decimal" />
+              <button type="submit" aria-label="Ajouter la dépense">+</button>
+            </form>
+          </div>`).join('') + '</div>';
+      }
+
+      const r = compute();
+      $('resultsSection').style.display = state.people.length ? '' : 'none';
+      $('total').textContent = euro(r.total);
+      $('share').textContent = euro(Math.round(r.share));
+
+      const maxAbs = Math.max(1, ...r.balances.map(b => Math.abs(b.bal)));
+      $('balances').innerHTML = r.balances.map(b => {
+        const w = Math.abs(b.bal) / maxAbs * 50;
+        const style = b.bal >= 0
+          ? `left:50%;width:${w}%;background:var(--accent-2)`
+          : `right:50%;width:${w}%;background:var(--danger)`;
+        const cls = b.bal > 0 ? 'pos' : b.bal < 0 ? 'neg' : '';
+        return `<div class="bal-row">
+          <span class="n">${esc(b.p.name)}</span>
+          <div class="bar"><i style="${style}"></i></div>
+          <span class="v ${cls}">${b.bal > 0 ? '+' : ''}${euro(b.bal)}</span>
+        </div>`;
+      }).join('');
+
+      $('transfers').innerHTML = r.transfers.length
+        ? r.transfers.map(t => `<li class="transfer">
+            <div class="who">
+              <span class="dot" style="background:${color(t.from)}"></span><b>${esc(t.from.name)}</b>
+              <span class="arrow">→</span>
+              <span class="dot" style="background:${color(t.to)}"></span><b>${esc(t.to.name)}</b>
+            </div>
+            <span class="money">${euro(t.cents)}</span>
+          </li>`).join('')
+        : `<li class="done"><div class="big">✨</div>${r.total ? 'Tout le monde est quitte !' : 'Ajoute des dépenses pour voir qui doit quoi.'}</li>`;
+    }
+
+    // ── Événements ──────────────────────────────────────────
+    $('addPerson').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = $('personName').value.trim();
+      if (!name) return $('personName').focus();
+      state.people.push({ id: state.nextId++, name, expenses: [] });
+      $('personName').value = '';
+      save(); render();
+      $('personName').focus();
+    });
+
+    $('people').addEventListener('submit', e => {
+      const form = e.target.closest('form[data-act="add-exp"]');
+      if (!form) return;
+      e.preventDefault();
+      const id = +form.closest('.card').dataset.id;
+      const cents = parseAmount(form.amount.value);
+      if (!cents) { form.amount.focus(); form.amount.select(); return; }
+      const p = state.people.find(x => x.id === id);
+      p.expenses.push({ id: state.nextId++, label: form.label.value.trim(), cents });
+      save(); render();
+      document.querySelector(`.card[data-id="${id}"] input[name="label"]`).focus();
+    });
+
+    $('people').addEventListener('click', e => {
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      const id = +btn.closest('.card').dataset.id;
+      if (btn.dataset.act === 'del-person') {
+        const p = state.people.find(x => x.id === id);
+        if (p.expenses.length && !confirm(`Retirer ${p.name} et ses dépenses ?`)) return;
+        state.people = state.people.filter(x => x.id !== id);
+      } else if (btn.dataset.act === 'del-exp') {
+        const p = state.people.find(x => x.id === id);
+        p.expenses = p.expenses.filter(x => x.id !== +btn.dataset.eid);
+      }
+      save(); render();
+    });
+
+    $('reset').addEventListener('click', () => {
+      if (!state.people.length || confirm('Effacer tous les participants et dépenses ?')) {
+        state = { people: [], nextId: 1 };
+        save(); render();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
